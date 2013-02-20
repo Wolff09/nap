@@ -29,9 +29,9 @@ def count_degree(path):
 	print_counter(counter)
 
 def main():
-	# count("private_data/musicbrainzGraph/musicbrainzNodes.csv", "nodeType")
-	# count("private_data/musicbrainzGraph/musicbrainzRelations.csv", "lLinkTypeId", lambda key: int(key))
-	# count("private_data/musicbrainzGraph/musicbrainzRelations.csv", "strShortLinkPhrase")
+	count("private_data/musicbrainzGraph/musicbrainzNodes.csv", "nodeType")
+	count("private_data/musicbrainzGraph/musicbrainzRelations.csv", "lLinkTypeId", lambda key: int(key))
+	count("private_data/musicbrainzGraph/musicbrainzRelations.csv", "strShortLinkPhrase")
 	count_degree("private_data/musicbrainzGraph/musicbrainzRelations.csv")
 
 if __name__ == '__main__':
