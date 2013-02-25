@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from read_csv import read_csv as read
+from read_csv import read_as_dict as read
 from union_find import *
 
 NODE_MOD = 200000

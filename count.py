@@ -1,4 +1,7 @@
-from read_csv import read_csv as read
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from read_csv import read_as_dict as read
 
 def print_counter(counter):
 	print str(counter).replace(",", ",\n")

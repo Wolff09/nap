@@ -1,20 +1,33 @@
-import csv
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-def read_csv(path, delimiter="\t"):
+def read_as_array(path, delimiter="\t"):
 	"""
-	Reads a CSV file with given path (may be relative).
-	Yields every row as a dictionary.
-	The keys for the dictionary are read from the head of the CSV file.
+	Reads a file line by line. The first line is supposed to
+	contain a header. However, the values of the header are
+	ignored - only the number of values matters.
 
-	If a row contains more fields than the header indicates the last
-	field of the head consumes the remaining fields of the row.
+	Yields every row, except the header (first line), of the
+	file found at the given path as array. The array contains
+	the values which are split by the given delimiter (default:
+	the \t tab char). Note that the array is at most of the same
+	length as the header.
 	"""
 	file = open(path, "r")
-	reader = csv.reader(file, delimiter=delimiter)
-	head = reader.next() # pop head
+	len_head = len(file.readline().strip().split(delimiter))
+	for line in file:
+		yield line.strip().split(delimiter, len_head)
+
+def read_as_dict(path, delimiter="\t"):
+	"""
+	Similar to read_as_array but yields a dict instead of
+	an array. The key-value pairs are created with the
+	header entry.
+	"""
+	file = open(path, "r")
+	head = file.readline().strip().split(delimiter)
 	len_head = len(head)
-	len_head_sub = len_head - 1
-	for row in reader:
-		data = {head[i]: row[i] for i in range(0, len_head_sub)}
-		data[head[-1]] = " ".join(row[i] for i in range(len_head, len(row))) # last field greedily takes the remain
-		yield data
+	for line in file:
+		array = line.strip().split(delimiter, len_head)
+		yield {head[i]: array[i] for i in range(len_head)}
+
