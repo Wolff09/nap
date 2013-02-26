@@ -1,22 +1,27 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from read_csv import read_as_dict as read
+from read_csv import read_as_array as read
 from union_find import *
 
-NODE_MOD = 200000
-CREATE_MOD = 100000
-MAKE_MOD = 200000
-EDGE_MOD = 1000
+# configuration
+PATH_TO_NODES = "private_data/musicbrainzGraph/musicbrainzNodes.csv"
+PATH_TO_EDGES = "private_data/musicbrainzGraph/musicbrainzRelations.csv"
+
+# How talky shall I be ?
+BARRIER_NODE_READING = 1000000
+BARRIER_OBJECT_CREATION = 500000
+BARRIER_MAKING_SETS = 500000
+BARRIER_EDGE_READING = 200000
 
 def main(length=0):
 	##################### find number of nodes if not provided #####################
 	if length == 0:
 		print "Starting to read nodes..."
-		for data in read("private_data/musicbrainzGraph/musicbrainzNodes.csv"):
+		for data in read(PATH_TO_NODES):
 			length += 1
-			if length % NODE_MOD == 0: print "...reading nodes (%s)" % length
-		print "Number of Nodes: %s" % len(nodes) # TODO: why does wc -l provide a (very) different result??
+			if length % BARRIER_NODE_READING == 0: print "...reading nodes (%s)" % length
+		print "Number of Nodes: %s" % length
 	
 
 	######################### creating UnionFind structure #########################
@@ -24,24 +29,25 @@ def main(length=0):
 	nodes = [i for i in range(0, length)] # create array of length length
 	for i in range(0, length):
 		nodes[i] = Node(i)
-		if i % CREATE_MOD == 0: print "...creating Nodes (%s)" % i
-	print "Making Initial UnionFind Sets..."
+		if i % BARRIER_OBJECT_CREATION == 0: print "...creating Nodes (%s)" % i
+
+	print "\nMaking Initial UnionFind Sets..."
 	counter = 0
 	for node in nodes:
 		MakeSet(node)
 		counter += 1
-		if counter % MAKE_MOD == 0: print "...making Sets (%s)" % counter
+		if counter % BARRIER_MAKING_SETS == 0: print "...making Sets (%s)" % counter
 
 
 	##################### merge partitions according to edges ######################
 	counter = 0
 	print "\nStarting to read edges..."
-	for data in read("private_data/musicbrainzGraph/musicbrainzRelations.csv"):
-		left = nodes[int(data['nodeId0'])]
-		right = nodes[int(data['nodeId1'])]
+	for data in read(PATH_TO_EDGES):
+		left = nodes[int(data[0])]
+		right = nodes[int(data[1])]
 		Union(left, right)
 		counter += 1
-		if counter % EDGE_MOD: print "...reading edges (%s)" % counter
+		if counter % BARRIER_EDGE_READING == 0: print "...reading edges (%s)" % counter
 
 	
 	########################## find remaining partitions ###########################
@@ -57,8 +63,9 @@ def main(length=0):
 
 
 if __name__ == '__main__':
-	# it seems as if there are 9904458 nodes
-	number_of_nodes = 9904458
+	# it seems as if there are 9909276 nodes
+	# number_of_nodes = 9909276
+	number_of_nodes = 2309276
 	import sys
 	if len(sys.argv) > 1 and sys.argv[1] == "-i":
 		# use initial knowledge
