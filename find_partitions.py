@@ -64,8 +64,7 @@ def main(length=0):
 
 if __name__ == '__main__':
 	# it seems as if there are 9909276 nodes
-	# number_of_nodes = 9909276
-	number_of_nodes = 2309276
+	number_of_nodes = 9909276
 	import sys
 	if len(sys.argv) > 1 and sys.argv[1] == "-i":
 		# use initial knowledge
