@@ -3,7 +3,7 @@
 
 from read_csv import read_as_array as read
 from union_find import *
-import os
+import os, shutil
 
 
 # configuration
@@ -11,9 +11,9 @@ import os
 # PATH_TO_EDGES = "private_data/musicbrainzGraph/musicbrainzRelations.csv"
 # PATH_TO_OUTPUT_DIR = "private_data/musicbrainzGraph/own/"
 # test configuration
-PATH_TO_NODES = "private_data/find_partitions_test/nodes.csv"
-PATH_TO_EDGES = "private_data/find_partitions_test/edges.csv"
-PATH_TO_OUTPUT_DIR = "private_data/find_partitions_test/output/"
+PATH_TO_NODES = "public_data/find_partitions_test/nodes.csv"
+PATH_TO_EDGES = "public_data/find_partitions_test/edges.csv"
+PATH_TO_OUTPUT_DIR = "public_data/find_partitions_test/output/"
 
 
 # How talky shall I be ?
@@ -87,6 +87,8 @@ def main(length=0):
 
 	##################### write partitions to dedicated files ######################
 	print "\n>>> Start writing partitions..."
+	shutil.rmtree(PATH_TO_OUTPUT_DIR, ignore_errors=True)
+	os.mkdir(PATH_TO_OUTPUT_DIR)
 	def make_path(partition):
 		return os.path.join(PATH_TO_OUTPUT_DIR, '%s.csv' % partition)
 	files = {partition: open(make_path(partition), 'w') for partition in remaining}
