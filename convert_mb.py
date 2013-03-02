@@ -12,7 +12,7 @@ def main():
 	G = nx.Graph()
 	print "-- adding nodes --"
 	for data in read(node_file):
-		G.add_node(int(data['nodeId']), nodeType=data[nodeType], name=data[name])
+		G.add_node(int(data['nodeId']), nodeType=data['nodeType'], name=data['name'])
 	print "-- adding edges --"
 	for data in read(edge_file):
 		G.add_edge(int(data['nodeId0']), int(data['nodeId1']), lLinkTypeId=data['lLinkTypeId'])
