@@ -31,7 +31,7 @@ def main(length=0):
 	print ">>> nodes: %s" % PATH_TO_NODES
 	print ">>> edges: %s" % PATH_TO_EDGES
 	print ">>> output: %s" % PATH_TO_OUTPUT_DIR
-	print "\n---------------------------------------------------------------------\n"
+	print "---------------------------------------------------------------------\n"
 
 
 	##################### find number of nodes if not provided #####################
