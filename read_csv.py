@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+def read_lines(path):
+	file = open(path, 'r')
+	for line in file:
+		yield line.strip()
+	file.close()
+
 def read_as_array(path, delimiter="\t"):
 	"""
 	Reads a file line by line. The first line is supposed to
@@ -13,11 +19,10 @@ def read_as_array(path, delimiter="\t"):
 	the \t tab char). Note that the array is at most of the same
 	length as the header.
 	"""
-	file = open(path, "r")
-	len_head = len(file.readline().strip().split(delimiter))
-	for line in file:
-		yield line.strip().split(delimiter, len_head)
-	file.close()
+	reader = read_lines(path)
+	len_head = len(reader.next().split(delimiter))
+	for line in reader:
+		yield line.split(delimiter, len_head)
 
 def read_as_dict(path, delimiter="\t"):
 	"""
@@ -25,11 +30,9 @@ def read_as_dict(path, delimiter="\t"):
 	an array. The key-value pairs are created with the
 	header entry.
 	"""
-	file = open(path, "r")
-	head = file.readline().strip().split(delimiter)
+	reader = read_lines(path)
+	head = reader.next().split(delimiter)
 	len_head = len(head)
-	for line in file:
-		array = line.strip().split(delimiter, len_head)
+	for line in reader:
+		array = line.split(delimiter, len_head)
 		yield {head[i]: array[i] for i in range(len_head)}
-	file.close()
-
