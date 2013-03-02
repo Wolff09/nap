@@ -17,6 +17,7 @@ def read_as_array(path, delimiter="\t"):
 	len_head = len(file.readline().strip().split(delimiter))
 	for line in file:
 		yield line.strip().split(delimiter, len_head)
+	file.close()
 
 def read_as_dict(path, delimiter="\t"):
 	"""
@@ -30,4 +31,5 @@ def read_as_dict(path, delimiter="\t"):
 	for line in file:
 		array = line.strip().split(delimiter, len_head)
 		yield {head[i]: array[i] for i in range(len_head)}
+	file.close()
 
