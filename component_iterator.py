@@ -5,41 +5,34 @@ import networkx as nx
 from read_csv import read_as_array as read
 
 
-def components(path_nodes, path_edges, delimiter="\t"):
+def components(path_merge, delimiter="\t"):
 	"""
-	Iterates over the connected components of a graph
-	given by two files containing nodes and edges.
+	Generator for iterating over connected components of
+	the musicbrainz graph.
 
-	This method loads the complete data set into
-	memory and then yields networkx graphs containing
-	connected components.
+	Each graph contains the pid of the connected component.
 	"""
-	nodes = [row for row in read(path_nodes, delimiter)]
-	edges = [row for row in read(path_edges, delimiter)]
-	partition_nodes = {}
-	for counter, row in enumerate(nodes):
-		component_id = int(row[1])
-		if component_id in partition_nodes:
-			partition_nodes[component_id].append(counter)
-		else:
-			partition_nodes[component_id] = [counter]
-	partition_edges = {}
-	for counter, row in enumerate(edges):
-		component_id = int(row[2])
-		if component_id in partition_edges:
-			partition_edges[component_id].append(counter)
-		else:
-			partition_edges[component_id] = [counter]
-	for key in partition_nodes:
-		graph = nx.Graph()
-		for node_index in partition_nodes[key]:
-			data = nodes[node_index]
-			graph.add_node(int(data[0]), nodeType=data[-2], name=data[-1])
-		for edge_index in partition_edges[key]:
-			data = edges[edge_index]
-			graph.add_edge(int(data[0]), int(data[1]), linkType=data[-2], linkName=data[-1])
-		yield graph
-	del nodes
-	del edges
-	del partition_nodes
-	del partition_edges
+	current_data = []
+	current_pid = -1
+	for row in read(path_merge):
+		pid = int(row[0])
+		if pid != current_pid:
+			if current_data: yield make_graph(current_pid, current_data, delimiter)
+			current_data = []
+			current_pid = pid
+		current_data += [(row[1], row[2])]
+	del current_data
+
+def make_graph(pid, data, delimiter):
+	graph = nx.Graph(pid=pid)
+	for type, data in data:
+		if type == "n":
+			parsed = parse(data, 5, delimiter)
+			graph.add_node(int(parsed[0]), type=parsed[3], name=parsed[4])
+		elif type == "e":
+			parsed = parse(data, 4, delimiter)
+			graph.add_edge(int(parsed[0]), int(parsed[1]), type=int(parsed[2]), name=parsed[3])
+	return graph
+
+def parse(data, length, delimiter):
+	return data.strip().split(delimiter, length)

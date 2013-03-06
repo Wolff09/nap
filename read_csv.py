@@ -20,7 +20,7 @@ def read_as_array(path, delimiter="\t"):
 	length as the header.
 	"""
 	reader = read_lines(path)
-	len_head = len(reader.next().split(delimiter))
+	len_head = len(reader.next().split(delimiter)) - 1
 	for line in reader:
 		yield line.split(delimiter, len_head)
 
@@ -32,7 +32,7 @@ def read_as_dict(path, delimiter="\t"):
 	"""
 	reader = read_lines(path)
 	head = reader.next().split(delimiter)
-	len_head = len(head)
+	len_head = len(head) - 1
 	for line in reader:
 		array = line.split(delimiter, len_head)
 		yield {head[i]: array[i] for i in range(len_head)}
