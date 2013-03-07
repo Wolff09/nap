@@ -9,7 +9,7 @@ def delete_node(node_file, tmp_file, various_artists_id):
 	for line in node_file:
 		if not line.startswith(search_string):
 			first_delimiter = line.find("\t")
-			tmp_file.write("%s\t%s\n" % (new_id, line[first_delimiter:].strip()))
+			tmp_file.write("%s\t%s" % (new_id, line[first_delimiter+1:]))
 			new_id += 1
 
 def delete_adjacent_edges(edge_file, tmp_file, various_artists_id):
