@@ -50,7 +50,7 @@ def process_data(path_to_nodes, path_to_edges, path_to_output):
 	# Step 5 and 6
 	print ">>> Sorting according to partition"
 	tmp_merge.flush()
-	sort_cmd = "tail -n %s | sort -k 2 -n > %s" % (tmp_merge.name, path_to_output)
+	sort_cmd = "cat %s | sort -k 2 -n > %s" % (tmp_merge.name, path_to_output)
 	os.system(sort_cmd)
 
 	# Clean up
