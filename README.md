@@ -60,7 +60,7 @@ Alternatively, you can use this package from the command line by invoking
 
 By now, you can not specify the `various_artists_id` like above.
 
-### Dependencies
+#### Dependencies
 
 If you have [python-progressbar](https://pypi.python.org/pypi/progressbar/2.2) installed you will see
 a progress bar. Otherwise no status information is printed. This dependency is **optional**.
