@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# TODO: this is not working!!! We delete nodes and assign a new id since we need continuous ids. But the ids of the edges are not touched, so they are wrong for the new node ids
+from progress import StatusBar
 
 def delete(nodes, edges, various_artists_id):
 	""" assumes: no self loops """
+	bar = StatusBar(len(edges))
 	if various_artists_id < 0 or various_artists_id >= len(nodes):
 		return
 	# swap various_artists to the end of the nodes and delete it
@@ -26,7 +27,12 @@ def delete(nodes, edges, various_artists_id):
 		# edges adjacent to the swapped node need the new id
 		elif line.startswith(search_string_rename) or line.startswith(search_string_rename, first_delimiter + 1):
 			edges[index] = edges[index].replace(search_string_rename, search_string_del, 1)
+		if index % 10000 == 0: bar.update(index)
 	# we have to delete the last index first, otherwise all indexes are compromised after deleting the very first
+	bar.close()
+	bar = StatusBar(len(delete_indices))
 	delete_indices.sort(reverse=True)
-	for index in delete_indices:
+	for i, index in enumerate(delete_indices):
 		del edges[index]
+		if i % 100 == 0: bar.update(i)
+	bar.close()

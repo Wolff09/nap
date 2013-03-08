@@ -3,6 +3,7 @@
 
 import os
 import various_artists, connected_components, merge
+from progress import StatusBar
 
 VARIOUS_ARTISTS_ID = -1
 HEADER = "pid\ttype\tdata\n"
@@ -25,15 +26,25 @@ def process_data(path_to_nodes, path_to_edges, path_to_output, various_artist_id
 	# TODO: more time optimization?
 	# TODO: progressbar ftw: http://code.google.com/p/python-progressbar/
 
-	def read_lines(path):
+	def read_lines(path, approx=10000000):
+		bar = StatusBar(approx)
+		lines = []
+		counter = 0
 		with open(path) as file:
 			file.readline() # drop header
-			lines = file.readlines()
+			for line in file:
+				lines.append(line)
+				counter += 1
+				if counter % 10000 == 0: bar.update(counter)
+			# lines = file.readlines()
 			if not lines[-1].endswith("\n"):
 				lines[-1] += "\n"
-			return lines
-	nodes = read_lines(path_to_nodes)
-	edges = read_lines(path_to_edges)
+		bar.close()
+		return lines
+	print ">>> Reading nodes..."
+	nodes = read_lines(path_to_nodes, approx=10000000)
+	print ">>> Reading edges..."
+	edges = read_lines(path_to_edges, approx=27000000)
 
 	# Step 1 and 2
 	print ">>> Deleting 'Various Artists'..."
@@ -55,11 +66,16 @@ def process_data(path_to_nodes, path_to_edges, path_to_output, various_artist_id
 
 	# Write to file
 	print ">>> Writing to file..."
+	bar = StatusBar(len(merged))
+	counter = 0
 	with open(path_to_output, "w") as file:
 		file.write(HEADER)
 		for line in merged:
 			file.write(line)
+			counter += 1
+			if counter % 10000 == 0: bar.update(counter)
 		file.close()
 	del merged
+	bar.close()
 
 	print ">>> Jobs Done!"
