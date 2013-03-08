@@ -2,14 +2,12 @@
 # -*- coding: utf-8 -*-
 
 import os
-from tempfile import NamedTemporaryFile as TemporaryFile
-from various_artists import delete_node, delete_adjacent_edges
-from connected_components import find_connected_components
-from merge import merge
+import various_artists, connected_components, merge
 
 VARIOUS_ARTISTS_ID = -1
+HEADER = "pid\ttype\tdata\n"
 
-def process_data(path_to_nodes, path_to_edges, path_to_output):
+def process_data(path_to_nodes, path_to_edges, path_to_output, various_artist_id=VARIOUS_ARTISTS_ID):
 	"""
 	Process the given data to be able to use the graph structure
 	with networkx while not allocating over 9000MB of RAM.
@@ -23,37 +21,45 @@ def process_data(path_to_nodes, path_to_edges, path_to_output):
 		Step 6: output to file
 	"""
 
-	tmp_nodes = TemporaryFile(mode="r+w")
-	tmp_edges = TemporaryFile(mode="r+w")
-	tmp_merge = TemporaryFile(mode="r+w")
+	# TODO: more memory releasable?
+	# TODO: more time optimization?
+	# TODO: progressbar ftw: http://code.google.com/p/python-progressbar/
+
+	def read_lines(path):
+		with open(path) as file:
+			file.readline() # drop header
+			lines = file.readlines()
+			if not lines[-1].endswith("\n"):
+				lines[-1] += "\n"
+			return lines
+	nodes = read_lines(path_to_nodes)
+	edges = read_lines(path_to_edges)
 
 	# Step 1 and 2
-	print ">>> Deleting 'Various Artists'"
-	with open(path_to_nodes, "r") as nodes_file, open(path_to_edges, "r") as edges_file:
-		delete_node(nodes_file, tmp_nodes, VARIOUS_ARTISTS_ID)
-		delete_adjacent_edges(edges_file, tmp_edges, VARIOUS_ARTISTS_ID)
-		nodes_file.close()
-		edges_file.close()
+	print ">>> Deleting 'Various Artists'..."
+	various_artists.delete(nodes, edges, various_artist_id)
 
 	# Step 3
-	print ">>> Searching for connected components"
-	tmp_nodes.flush()
-	tmp_edges.flush()
-	components = find_connected_components(tmp_nodes, tmp_edges)
+	print ">>> Searching for connected components..."
+	components = connected_components.compute(nodes, edges)
 
 	# Step 4
-	print ">>> Merging nodes and edges into one file"
-	merge(tmp_nodes, tmp_edges, tmp_merge, components)
-	tmp_nodes.close()
-	tmp_edges.close()
+	print ">>> Merging nodes and edges..."
+	merged = merge.merge(nodes, edges, components)
+	del nodes
+	del edges
 
 	# Step 5 and 6
-	print ">>> Sorting according to partition"
-	tmp_merge.flush()
-	sort_cmd = "cat %s | sort -k 2 -n > %s" % (tmp_merge.name, path_to_output)
-	os.system(sort_cmd)
+	print ">>> Sorting according to connected components..."
+	merged.sort()
 
-	# Clean up
-	tmp_merge.close()
-	print ">>> No header written..."
+	# Write to file
+	print ">>> Writing to file..."
+	with open(path_to_output, "w") as file:
+		file.write(HEADER)
+		for line in merged:
+			file.write(line)
+		file.close()
+	del merged
+
 	print ">>> Jobs Done!"
