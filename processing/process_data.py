@@ -5,7 +5,7 @@ import os
 import various_artists, connected_components, merge
 from progress import StatusBar
 
-VARIOUS_ARTISTS_ID = -1
+VARIOUS_ARTISTS_ID = 290085
 HEADER = "pid\ttype\tdata\n"
 
 def process_data(path_to_nodes, path_to_edges, path_to_output, various_artist_id=VARIOUS_ARTISTS_ID):
