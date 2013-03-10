@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import networkx as nx
-from networkx import centrality, distance_measures
 from collections import Counter
 
 
@@ -18,10 +17,10 @@ def degree_distribution(graph, *args, **kwargs):
 # see: http://networkx.github.com/documentation/latest/reference/algorithms.distance_measures.html
 
 def diameter(graph, *args, **kwargs):
-	return distance_measures.diameter(graph, *args, **kwargs)
+	return nx.distance_measures.diameter(graph, *args, **kwargs)
 
 def eccentricity(graph, *args, **kwargs):
-	return distance_measures.eccentricity(graph, *args, **kwargs)
+	return nx.distance_measures.eccentricity(graph, *args, **kwargs)
 
 
 ################################# clustering ##################################
@@ -41,10 +40,10 @@ def transitivity(graph, *args, **kwargs):
 # see: http://networkx.github.com/documentation/latest/reference/algorithms.centrality.html
 
 def degree_centrality(graph, *args, **kwargs):
-	return centrality.degree_centrality(graph, *args, **kwargs)
+	return nx.centrality.degree_centrality(graph, *args, **kwargs)
 
 def closeness_centrality(graph, *args, **kwargs):
-	return centrality.closeness_centrality(graph, *args, **kwargs)
+	return nx.centrality.closeness_centrality(graph, *args, **kwargs)
 
 def betweenness_centrality(graph, *args, **kwargs):
-	return centrality.betweenness_centrality(graph, *args, **kwargs)
+	return nx.centrality.betweenness_centrality(graph, *args, **kwargs)

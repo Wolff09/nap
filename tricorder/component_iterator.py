@@ -17,7 +17,8 @@ def components(path_merge, delimiter="\t"):
 	for row in read(path_merge):
 		pid = int(row[0])
 		if pid != current_pid:
-			if current_data: yield make_graph(current_pid, current_data, delimiter)
+			if current_data:
+				yield make_graph(current_pid, current_data, delimiter)
 			current_data = []
 			current_pid = pid
 		current_data += [(row[1], row[2])]
