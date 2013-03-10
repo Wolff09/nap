@@ -3,3 +3,4 @@ venv/*
 private_data/*
 *.pyc
 *.DS_STORE
+nap.db

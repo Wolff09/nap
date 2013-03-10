@@ -1,33 +1,61 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import sys, os
+from models import DATABASE_PATH, create_tables, clear_tables
+import calculator
+
+
+OPERATIONS = ("syncdb", "cleardb", "calculate")
 
 def main(*args):
 	if not args:
-		print ">>> Please specify an operation. Nothing done..."
-	elif args[0] == "syncdb":
-		syncdb(*args[1:]) # sync db takes at most 2 params
+		print ">>> Please specify an operation. Nothing done... Available operations: %s" % ", ".join(OPERATIONS)
 	else:
-		print ">>> The operation you specified is invalid. Nothing done..."
+		operation_name = args[0]
+		if operation_name in OPERATIONS:
+			globals()[operation_name](*args[1:])
+		else:
+			print ">>> The operation you specified is invalid. Nothing done... Available operations: %s" % ", ".join(OPERATIONS)
 
 def syncdb(*args):
-	if len(args) > 2:
-		print ">>> Invalid usage. syncdb takes at most 2 arguments. Usage: syncdb [-f] path/to/new/database/file"
-		return
-	elif len(args) < 1:
-		print ">>> Invalid usage. syncdb takes at least 1 argument. Usage: syncdb [-f] path/to/new/database/file"
+	if len(args) > 1:
+		print ">>> Invalid usage. syncdb takes at most 1 argument. Usage: syncdb [-f]"
 	elif len(args) == 1:
-		if os.path.exists(args[0]):
-			print ">>> The specified destination file already exists. Use -f to force overwrite."
+		if os.path.exists(DATABASE_PATH):
+			os.remove(DATABASE_PATH)
+			create_database()
 		else:
-			create_database(args[0])
-	else:
-		create_database(args[0])
+			create_database()
+	elif len(args) == 0:
+		if os.path.exists(DATABASE_PATH):
+			print ">>> The database already exists. Use -f to force overwrite or use cleardb."
+		else:
+			create_database()
 
-def create_database(path):
-	print "Creating new database in: %s" % path
-	print "not yet doing anything... not yet implemented"
+def create_database():
+	print ">>> Creating database at: %s" % DATABASE_PATH
+	create_tables()
+
+def cleardb(*args):
+	if os.path.exists(DATABASE_PATH):
+		print ">>> Clearing database at: %s" % DATABASE_PATH
+		res = clear_tables()
+		print ">>> %s Partitions deleted, %s Nodes deleted" % res
+	else:
+		print "There is no database that could be cleared. Use syncdb to create one."
+
+def calculate(*args):
+	if not args:
+		print ">>> You have to provide the path to the input data."
+	elif len(args) > 1:
+		print ">>> Invalid usage. This command takes exactly one argument, namely the path to the input data."
+	else:
+		path = args[0]
+		if os.path.exists(path) and os.path.isfile(path):
+			print ">>> Starting data analysis..."
+			calculator.calculate(path)
+		else:
+			print ">>> You did not provide a valid input file path."
 
 if __name__ == '__main__':
 	main(*sys.argv[1:])
