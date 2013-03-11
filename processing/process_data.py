@@ -4,28 +4,27 @@
 import os
 import various_artists, connected_components, merge
 from progress import StatusBar
+from datetime import datetime, timedelta
 
-VARIOUS_ARTISTS_ID = 290085
 HEADER = "pid\ttype\tdata\n"
 
-def process_data(path_to_nodes, path_to_edges, path_to_output, various_artist_id=VARIOUS_ARTISTS_ID):
+def process_data(path_to_nodes, path_to_edges, path_to_output, *deletion_names):
 	"""
 	Process the given data to be able to use the graph structure
 	with networkx while not allocating over 9000MB of RAM.
 
 	The data undergoes the following steps.
-		Step 1: delete node "various artists"
-		Step 2: delete edges adjacent to "various artists" node
-		Step 3: find connected components
-		Step 4: merge files and add connected component id
-		Step 5: sort files
-		Step 6: output to file
+		Step 1: read data into memory
+		Step 2: delete nodes that match a given name
+		Step 3: delete edges adjacent to nodes deleted in Step 2
+		Step 4: find connected components
+		Step 5: merge nodes and edges
+		Step 6: sort
+		Step 7: output to file
 	"""
+	started = datetime.now()
 
-	# TODO: more memory releasable?
-	# TODO: more time optimization?
-	# TODO: progressbar ftw: http://code.google.com/p/python-progressbar/
-
+	# Step 1
 	def read_lines(path, approx=10000000):
 		bar = StatusBar(approx)
 		lines = []
@@ -46,25 +45,31 @@ def process_data(path_to_nodes, path_to_edges, path_to_output, various_artist_id
 	print ">>> Reading edges..."
 	edges = read_lines(path_to_edges, approx=27000000)
 
-	# Step 1 and 2
-	print ">>> Deleting 'Various Artists'..."
-	various_artists.delete(nodes, edges, various_artist_id)
-
-	# Step 3
-	print ">>> Searching for connected components..."
-	components = connected_components.compute(nodes, edges)
+	# Step 2 and 3
+	if deletion_names:
+		print ">>> Searching ids voted for deletion..."
+		deletion_ids = various_artists.find_ids(nodes, *deletion_names)
+		print ">>> Deleting nodes and edges..."
+		various_artists.delete(nodes, edges, *deletion_ids)
 
 	# Step 4
+	print ">>> Searching for connected components..."
+	b = datetime.now()
+	components = connected_components.compute(nodes, edges)
+	e = datetime.now()
+	print "---- %s" % str(e-b)
+
+	# Step 5
 	print ">>> Merging nodes and edges..."
 	merged = merge.merge(nodes, edges, components)
 	del nodes
 	del edges
 
-	# Step 5 and 6
+	# Step 6
 	print ">>> Sorting according to connected components..."
 	merged.sort()
 
-	# Write to file
+	# Step 7
 	print ">>> Writing to file..."
 	bar = StatusBar(len(merged))
 	counter = 0
@@ -75,7 +80,9 @@ def process_data(path_to_nodes, path_to_edges, path_to_output, various_artist_id
 			counter += 1
 			if counter % 10000 == 0: bar.update(counter)
 		file.close()
-	del merged
 	bar.close()
 
-	print ">>> Jobs Done!"
+	# say goodbye
+	end = datetime.now()
+	diff = end-begin
+	print ">>> Jobs Done! [%s]" % str(timedelta(seconds=int(diff.total_seconds())))

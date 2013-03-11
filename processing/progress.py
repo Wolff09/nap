@@ -9,6 +9,7 @@ try:
 		def update(self, val):
 			self.bar.update(val if val <= self.bar.maxval else self.bar.maxval)
 		def close(self):
+			self.update(self.bar.maxval)
 			self.bar.finish()
 except:
 	print ">>> Note: If you install 'progressbar' from 'https://pypi.python.org/pypi/progressbar/2.2' a progress bar is displayed."

@@ -10,7 +10,8 @@ def merge(nodes, edges, components):
 		counter = 0
 		while list:
 			line = list.pop() # modify input list to reduce memory consumption
-			merged.append("%s\t%s\t%s" % (components[get_id(line)], type, line))
+			if line:
+				merged.append("%s\t%s\t%s" % (components[get_id(line)], type, line))
 			counter += 1
 			if counter % 10000 == 0: bar.update(counter)
 		bar.close()

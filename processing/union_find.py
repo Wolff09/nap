@@ -6,13 +6,12 @@ def find(array, x):
 	if array[x] == x:
 		return x
 	else:
-		# return find(array, array[x])
+		# the recursion depth is too damn high
 		node = array[x]
 		node_parent = array[node]
 		while node != node_parent:
 			node = node_parent
 			node_parent = array[node]
-		# TODO: is this path compression correct?
 		array[x] = node # path compression
 		return node
 
