@@ -13,6 +13,7 @@ def main(cmd_args):
 		print "Edge file is no file"
 	else:
 		process_data(*cmd_args)
+		sys.exit(0)
 
 if __name__ == '__main__':
 	main(sys.argv[1:])

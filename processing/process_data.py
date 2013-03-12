@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
+import os, gc
 import various_artists, connected_components, merge
 from progress import StatusBar
 from datetime import datetime, timedelta
@@ -71,6 +71,7 @@ def process_data(path_to_nodes, path_to_edges, path_to_output, *deletion_names):
 
 	# Step 7
 	print ">>> Writing to file..."
+
 	bar = StatusBar(len(merged))
 	counter = 0
 	with open(path_to_output, "w") as file:
@@ -81,7 +82,10 @@ def process_data(path_to_nodes, path_to_edges, path_to_output, *deletion_names):
 			if counter % 10000 == 0: bar.update(counter)
 		file.close()
 	bar.close()
+	del merged
 
 	# say goodbye
 	diff = datetime.now() - begin
 	print ">>> Jobs Done! [%s]" % str(timedelta(seconds=int(diff.total_seconds())))
+	return
+	# TODO: program does not seem to release memory (via terminal)
