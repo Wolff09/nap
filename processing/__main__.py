@@ -4,12 +4,15 @@
 import sys, os
 from process_data import process_data
 
-if __name__ == '__main__':
-	cmd_args = sys.argv[1:]
+def main(cmd_args):
 	if len(cmd_args) < 3:
-		print "Usage: nodes_file edges_file output_file"
-	if not os.path.isfile(cmd_args[0]):
+		print "Usage: processing path/to/nodes/file path/to/edge/file path/to/output/file"
+	elif not os.path.isfile(cmd_args[0]):
 		print "Node file is no file"
-	if not os.path.isfile(cmd_args[1]):
+	elif not os.path.isfile(cmd_args[1]):
 		print "Edge file is no file"
-	process_data(*cmd_args)
+	else:
+		process_data(*cmd_args)
+
+if __name__ == '__main__':
+	main(sys.argv[1:])

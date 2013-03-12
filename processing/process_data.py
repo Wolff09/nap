@@ -13,6 +13,11 @@ def process_data(path_to_nodes, path_to_edges, path_to_output, *deletion_names):
 	Process the given data to be able to use the graph structure
 	with networkx while not allocating over 9000MB of RAM.
 
+	The nodes of the input data must have continuous ids.
+	Furthermore, artist entries are expected to not end with
+	a \t. Otherwise an entry which should be deleted might not
+	be deleted.
+
 	The data undergoes the following steps.
 		Step 1: read data into memory
 		Step 2: delete nodes that match a given name
@@ -22,7 +27,7 @@ def process_data(path_to_nodes, path_to_edges, path_to_output, *deletion_names):
 		Step 6: sort
 		Step 7: output to file
 	"""
-	started = datetime.now()
+	begin = datetime.now()
 
 	# Step 1
 	def read_lines(path, approx=10000000):
@@ -35,14 +40,12 @@ def process_data(path_to_nodes, path_to_edges, path_to_output, *deletion_names):
 				lines.append(line)
 				counter += 1
 				if counter % 10000 == 0: bar.update(counter)
-			# lines = file.readlines()
 			if not lines[-1].endswith("\n"):
 				lines[-1] += "\n"
 		bar.close()
 		return lines
-	print ">>> Reading nodes..."
+	print ">>> Reading nodes and edges..."
 	nodes = read_lines(path_to_nodes, approx=10000000)
-	print ">>> Reading edges..."
 	edges = read_lines(path_to_edges, approx=27000000)
 
 	# Step 2 and 3
@@ -54,10 +57,7 @@ def process_data(path_to_nodes, path_to_edges, path_to_output, *deletion_names):
 
 	# Step 4
 	print ">>> Searching for connected components..."
-	b = datetime.now()
 	components = connected_components.compute(nodes, edges)
-	e = datetime.now()
-	print "---- %s" % str(e-b)
 
 	# Step 5
 	print ">>> Merging nodes and edges..."
@@ -83,6 +83,5 @@ def process_data(path_to_nodes, path_to_edges, path_to_output, *deletion_names):
 	bar.close()
 
 	# say goodbye
-	end = datetime.now()
-	diff = end-begin
+	diff = datetime.now() - begin
 	print ">>> Jobs Done! [%s]" % str(timedelta(seconds=int(diff.total_seconds())))

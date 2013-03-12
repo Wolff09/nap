@@ -4,8 +4,6 @@
 from union_find import make_sets, find, union
 from progress import StatusBar
 
-PATH_COMPRESSION = 500000 # beat (without): 0:14:46.256371
-
 def compute(nodes, edges):
 	parents = make_sets(len(nodes))
 
@@ -20,9 +18,6 @@ def compute(nodes, edges):
 			union(parents, left, right)
 		counter += 1
 		if counter % 5000 == 0: bar.update(counter)
-		if counter % PATH_COMPRESSION == 0:
-			for i, x in enumerate(parents):
-				parents[i] = find(parents, x)
 
 	bar.close()
 	bar = StatusBar(len(parents))
