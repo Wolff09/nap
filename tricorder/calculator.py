@@ -33,7 +33,7 @@ def calculate(merged, tops):
 				artists = 1
 				if graph.node[nid]["name"] in top_artists:
 					num_top_artists = 1
-			part = Partition(pid=pid, diameter=0, num_nodes=graph.number_of_nodes(), num_edges=graph.number_of_edges, num_artists=artists, num_top_artists=num_top_artists, density=nx.density(graph))
+			part = Partition.create(pid=pid, diameter=0, num_nodes=graph.number_of_nodes(), num_edges=graph.number_of_edges, num_artists=artists, num_top_artists=num_top_artists, density=nx.density(graph))
 			Node.create(nid=int(nid), pid=pid, name=graph.node[nid]["name"], node_type=graph.node[nid]["type"] ,degree=0, closeness=0, eccentricity=0, betweenness=0)
 			continue
 		else:
@@ -48,9 +48,7 @@ def calculate(merged, tops):
 						num_top_artists += 1
 				n = Node(nid=key,  pid=pid, node_type=attr["type"], name=attr["name"], degree=degree[key], closeness=close[key], eccentricity=1/ecc[key], betweenness=between[key])
 				n.save()
-			part = Partition(pid=pid, diameter=nx.diameter(graph), num_nodes=graph.number_of_nodes(), num_edges=graph.number_of_edges(), num_artist=artists, num_top_artists=num_top_artists, density=nx.density(graph))
-
-		part.save()
+			part = Partition.create(pid=pid, diameter=nx.diameter(graph), num_nodes=graph.number_of_nodes(), num_edges=graph.number_of_edges(), num_artist=artists, num_top_artists=num_top_artists, density=nx.density(graph))
 
 		counter += 1
 		if counter % 1000 == 0:
