@@ -13,12 +13,17 @@ class Partition(NapModel):
 	pid = PrimaryKeyField()
 	diameter = IntegerField()
 	num_nodes = IntegerField()
+	num_edges = IntegerField()
+	num_artists = IntegerField()
+	num_top_artists = IntegerField()
 	density = FloatField()
 
 
 class Node(NapModel):
 	nid = PrimaryKeyField()
 	pid = ForeignKeyField(Partition, related_name="nodes")
+	name = CharField()
+	node_type = CharField()
 	degree = IntegerField()
 	closeness = FloatField()
 	eccentricity = FloatField()
