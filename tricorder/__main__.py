@@ -46,17 +46,20 @@ def cleardb(*args):
 		print "There is no database that could be cleared. Use syncdb to create one."
 
 def calculate(*args):
-	if not args:
-		print ">>> You have to provide the path to the input data."
-	elif len(args) > 1:
-		print ">>> Invalid usage. This command takes exactly one argument, namely the path to the input data."
+	if not args or len(args) < 2:
+		print ">>> You have to provide the path to the input data and the path to the top artists."
+	elif len(args) > 2:
+		print ">>> Invalid usage. This command takes exactly two arguments: path to the input data and path to top artists."
 	else:
-		path = args[0]
-		if os.path.exists(path) and os.path.isfile(path):
-			print ">>> Starting data analysis..."
-			calculator.calculate(path)
+		path_data = args[0]
+		path_artists = args[1]
+		if not os.path.exists(path_data) or not os.path.isfile(path_data):
+			print ">>> You did not provide a valid data input file path."
+		elif not os.path.exists(path_artists) or not os.path.isfile(path_artists):
+			print ">>> You did not provide a valid artists input file path."
 		else:
-			print ">>> You did not provide a valid input file path."
+			print ">>> Starting data analysis..."
+			calculator.calculate(path_data)
 
 if __name__ == '__main__':
 	main(*sys.argv[1:])
