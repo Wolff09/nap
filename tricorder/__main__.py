@@ -59,7 +59,7 @@ def calculate(*args):
 			print ">>> You did not provide a valid artists input file path."
 		else:
 			print ">>> Starting data analysis..."
-			calculator.calculate(path_data)
+			calculator.calculate(path_data, path_artists)
 
 if __name__ == '__main__':
 	main(*sys.argv[1:])
