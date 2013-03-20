@@ -33,7 +33,7 @@ def calculate(merged, tops):
 				artists = 1
 				if graph.node[nid]["name"] in top_artists:
 					num_top_artists = 1
-			Partition.create(pid=pid, diameter=0, num_nodes=graph.number_of_nodes(), num_edges=graph.number_of_edges, num_artists=artists, num_top_artists=num_top_artists, density=nx.density(graph))
+			Partition.create(pid=pid, diameter=0, num_nodes=graph.number_of_nodes(), num_edges=graph.number_of_edges(), num_artists=artists, num_top_artists=num_top_artists, density=nx.density(graph))
 			Node.create(nid=int(nid), pid=pid, name=graph.node[nid]["name"], node_type=graph.node[nid]["type"] ,degree=0, closeness=0, eccentricity=0, betweenness=0)
 			continue
 		else:
