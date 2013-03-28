@@ -1,15 +1,3 @@
-""" 
-Iterates over all connected components and calculates basic measures such as: 
-	-size (in Nodes)
-	-diameter
-	-density
-And for every node:
-	-degree
-	-closeness centrality
-	-betweenness centrality
-	-eccentricity centrality
-"""
-
 from models import Partition, Node
 import component_iterator as iterator
 import shortcuts as sc
@@ -19,38 +7,52 @@ def get_top_artists(path):
 	with open(path, "r") as file:
 		return set([a for a in file.read().split("\r")])
 
-def calculate(merged, tops):
-	counter = 0
-	top_artists = get_top_artists(tops)
-	for graph in iterator.components(merged):
-		pid = graph.graph["pid"]
-		artists = 0
+def calculate(path_data, path_artists, talky=False):
+	"""
+	Reads all connected components from the given dataset and computes the
+	following measures:
+		- size (number of nodes)
+		- diameter
+		- density
+		- degree
+		- closeness_centrality
+		- betweenness_centrality
+		- eccentricity
+
+	The first three measures are computed for each connected component.
+	The remaining ones are computed for each node.
+
+	The result is written to a database (see tricorder.models).
+	Note: the database must exists but needs to be empty (should be empty).
+	"""
+	top_artists = get_top_artists(path_artists)
+	for i, graph in enumerate(iterator.components(path_data)):
+		is_real_graph = graph.number_of_edges() > 0
+		num_artists = 0
 		num_top_artists = 0
-		# Because networkx sucks
-		if graph.number_of_edges() == 0:
-			nid = graph.nodes()[0]
-			if graph.node[nid]["type"] == "artist":
-				artists = 1
-				if graph.node[nid]["name"] in top_artists:
-					num_top_artists = 1
-			part = Partition.create(pid=pid, diameter=0, num_nodes=graph.number_of_nodes(), num_edges=graph.number_of_edges, num_artists=artists, num_top_artists=num_top_artists, density=nx.density(graph))
-			Node.create(nid=int(nid), pid=pid, name=graph.node[nid]["name"], node_type=graph.node[nid]["type"] ,degree=0, closeness=0, eccentricity=0, betweenness=0)
-			continue
-		else:
-			degree = sc.degree_centrality(graph)
-			close = sc.closeness_centrality(graph)
-			between = sc.betweenness_centrality(graph)
-			ecc = sc.eccentricity(graph)
-			for key, attr in graph.node.items():
-				if attr["type"] == "artist":
-					artists += 1
-					if attr["name"] in top_artists:
-						num_top_artists += 1
-				n = Node(nid=key,  pid=pid, node_type=attr["type"], name=attr["name"], degree=degree[key], closeness=close[key], eccentricity=1/ecc[key], betweenness=between[key])
-				n.save()
-			part = Partition.create(pid=pid, diameter=nx.diameter(graph), num_nodes=graph.number_of_nodes(), num_edges=graph.number_of_edges(), num_artist=artists, num_top_artists=num_top_artists, density=nx.density(graph))
 
-		counter += 1
-		if counter % 1000 == 0:
-			print counter
+		# calculate measures (only if we have edges!)
+		density = nx.density(graph) if is_real_graph else 0
+		diameter = nx.diameter(graph) if is_real_graph else 0
+		degree = sc.degree_centrality(graph) if is_real_graph else {}
+		closeness = sc.closeness_centrality(graph) if is_real_graph else {}
+		betweenness = sc.betweenness_centrality(graph) if is_real_graph else {}
+		eccentricity = sc.eccentricity(graph) if is_real_graph else {}
 
+		# create Node DB entries
+		for id, attrs in graph.node.items():
+			if attrs['type'] == 'artist':
+				num_artists += 1
+				if attrs['name'] in top_artists:
+					num_top_artists += 1
+			ecc = 1/eccentricity[id] if id in eccentricity else 0 # need an extra variable here since division by zero is evil
+			Node.create(nid=int(id), pid=graph.graph['pid'], node_type=attrs["type"],
+				name=attrs["name"], degree=degree.get(id, 0), closeness=closeness.get(id, 0),
+				eccentricity=ecc, betweenness=betweenness.get(id, 0))
+
+		# create Partition DB entry
+		Partition.create(pid=graph.graph['pid'], diameter=diameter,
+			num_nodes=graph.number_of_nodes(), num_edges=graph.number_of_edges(),
+			num_artists=num_artists, num_top_artists=num_top_artists, density=density)
+
+		if talky and i % 500 == 0: print i
