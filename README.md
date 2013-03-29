@@ -22,6 +22,57 @@ TODO
 Code Overview
 -------------
 
+### Package: `tricorder`
+
+Like the well know [Tricorder](http://readwrite.com/files/styles/800_450sc/public/fields/Mister_Tricorder.jpg),
+this package is for analysing the musicbrainz graph.
+
+To analyse a dataset, you need to convert the data to a proper
+format via the `processing` package.
+
+The results from the data analysis is written to a sqlite database
+named `nap.db`.
+
+The following measures are calculate:
+	- size (number of nodes)
+	- diameter
+	- density
+	- degree
+	- closeness_centrality
+	- betweenness_centrality
+	- eccentricity
+
+#### Usage
+
+First of all, you need to create a database to store the results of
+the data analysis. Therefore, type
+```console
+python tricorder syncdb
+```
+
+If your database already exists, your may want to clear it
+(remove all entries). You can do this with
+```console
+python tricorder cleardb
+```
+
+With this setup, you can start your data analysis with
+```console
+python tricorder calculate path/to/precessed_data.csv path/to/top_10000_artists.csv
+```
+
+This command will take a while and it will consume a lot of memory (over 16GB).
+But if you even have spare memory, you may want to speed up the computation
+with multithreading. To do so, use the following command
+```console
+python tricorder ccalculate path/to/precessed_data.csv path/to/top_10000_artists.csv [number_of_threads]
+```
+
+The `number_of_threads` parameter is optional and defaults to `4`.
+
+#### Dependencies
+You need the [PeeWee ORM](https://github.com/coleifer/peewee) and SQLite.
+
 ### Package: `processing`
 
 This package is used to convert the musicbrainz graph into a
@@ -46,19 +97,21 @@ is quite well. The memory consumption is somewhere between 3GB to
 #### Usage
 
 You can use this package from within python scripts like so
-
-	from procssing import process_data
-	process_data("path/to/nodes.csv", "path/to/edges.csv", "path/to/output.csv", various_artists_id=-1)
-
-The `various_artists_id` is an optional parameter which defaults to `-1`. A value of `-1` means that
-no node is deleted. If a positive integer is given the node with that index and all adjacent edges are
-deleted.
+```python
+from procssing import process_data
+process_data("path/to/nodes.csv", "path/to/edges.csv", "path/to/output.csv")
+process_data("path/to/nodes.csv", "path/to/edges.csv", "path/to/output.csv", "Various Artists", "Even More Various Artists")
+```
+You can process without any deletion of nodes and edges - just keeping the original data and transforming it into another format.
+However, you may want to delete some nodes from the graph, like `Various Artists`. To do so, you can specify an arbitrary number
+of artist names (as strings) and pass them to the method call. The processing removes any node of type `artist` whichs name
+matches one of the given names (exact case insensitive match) and all adjacent edges.
 
 Alternatively, you can use this package from the command line by invoking
-
-	python path/to/nodes.csv path/to/edges.csv path/to/output.csv
-
-By now, you can not specify the `various_artists_id` like above.
+```console
+python path/to/nodes.csv path/to/edges.csv path/to/output.csv ["Various Artists"...]
+```
+Again, you can specify an arbitrary number artist names which shall be deleted.
 
 #### Dependencies
 

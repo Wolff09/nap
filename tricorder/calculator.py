@@ -8,6 +8,14 @@ def get_top_artists(path):
 		return set([a for a in file.read().split("\r")])
 
 def calculate_concurrent(path_data, path_artists, num_threads=4, talky=False):
+	"""
+	Same as `calculate`, but uses multiple threads to accelerate the computation
+	process. Threading is only applied the calculation of the measures - the
+	input data is still read sequentially.
+
+	Note: this is even more memory consuming than `calculate`.
+	Further note: the real bottleneck seems to be reading the data from disk.
+	"""
 	from threading import Thread
 	from Queue import Queue
 	from sys import stdout

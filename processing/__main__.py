@@ -6,7 +6,7 @@ from process_data import process_data
 
 def main(cmd_args):
 	if len(cmd_args) < 3:
-		print "Usage: processing path/to/nodes/file path/to/edge/file path/to/output/file"
+		print "Usage: processing path/to/nodes/file path/to/edge/file path/to/output/file [deletion_names...]"
 	elif not os.path.isfile(cmd_args[0]):
 		print "Node file is no file"
 	elif not os.path.isfile(cmd_args[1]):
