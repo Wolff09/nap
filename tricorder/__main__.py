@@ -62,8 +62,25 @@ def calculate(*args):
 			calculator.calculate(path_data, path_artists, talky=True)
 
 def ccalculate(*args):
-	# TODO: check args (like above), maybe specify number of threads via parameter
-	calculator.calculate_concurrent(args[0], args[1], talky=True)
+	if not args or len(args) < 2:
+		print ">>> You have to provide the path to the input data and the path to the top artists. You may optionally provide the number of threads to be used."
+	elif len(args) > 3:
+		print ">>> Invalid usage. This command takes two mandatory and one optional argument: \
+				   path to the input data, path to top artists and number of threads to be used (optional)."
+	else:
+		path_data = args[0]
+		path_artists = args[1]
+		num_threads = args[2] if len(args) == 3 else "4"
+		if not os.path.exists(path_data) or not os.path.isfile(path_data):
+			print ">>> You did not provide a valid data input file path."
+		elif not os.path.exists(path_artists) or not os.path.isfile(path_artists):
+			print ">>> You did not provide a valid artists input file path."
+		elif not num_threads.isdigit():
+			print ">>> You did not provide a valid number of threads"
+		else:
+			num_threads = int(num_threads)
+			print ">>> Starting data analysis..."
+			calculator.calculate_concurrent(args[0], args[1], num_threads=num_threads, talky=True)
 
 if __name__ == '__main__':
 	main(*sys.argv[1:])

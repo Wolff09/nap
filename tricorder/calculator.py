@@ -23,15 +23,22 @@ def calculate_concurrent(path_data, path_artists, num_threads=4, talky=False):
 	def do_work(index, graph):
 		calculate_connected_component(index, graph, top_artists)
 	def print_stati():
-		while talky:
-			# TODO: cool format
-			stdout.write('\r' + '  \t'.join(['[%s] %s' % t for t in enumerate(status)]) + '  \t\t[sum] %s' % sum(status))
-			stdout.flush()
-			time.sleep(.75)
+		# fancy output looks ugly...
+		if talky:
+			# print table head
+			stdout.write('Progress:' + 'all'.rjust(11) + '  || ' + ' | '.join([("T%s" % (i+1)).rjust(5) for i in range(num_threads)]) + '\n')
+			while do_the_print:
+				# reprint table body
+				stdout.write('\r' + str(sum(status)).rjust(20) + '  || ' + ' | '.join([str(i).rjust(5) for i in status]))
+				stdout.flush()
+				time.sleep(.75)
+			stdout.write('\n')
 
+	num_threads = max(num_threads, 1) # stupid user might be stupid
 	queue = Queue(maxsize=num_threads*2)
 	top_artists = get_top_artists(path_artists)
 	status = [0 for i in range(num_threads)]
+	do_the_print = True
 
 	# create workers
 	for i in range(num_threads):
@@ -41,16 +48,16 @@ def calculate_concurrent(path_data, path_artists, num_threads=4, talky=False):
 
 	# for status information
 	status_thread = Thread(target=print_stati)
-	status_thread.daemon = True
 	status_thread.start()
 
 	# load data
 	for tupel in enumerate(iterator.components(path_data)):
+		if tupel[0] > 500: break
 		queue.put(tupel)
 
 	# wait until all threads are finished
 	queue.join()
-	status_thread.stop()
+	do_the_print = False
 
 def calculate(path_data, path_artists, talky=False):
 	"""
