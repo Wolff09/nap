@@ -8,7 +8,7 @@ from shortcuts import (
 		eccentricity, clustering, average_clustering, transitivity,
 		degree_centrality, closeness_centrality, betweenness_centrality
 	)
-from calculator import calculate
+from calculator import calculate, calculate_concurrent
 
 try:
 	connect()
