@@ -2,11 +2,11 @@ from peewee import *
 
 
 DATABASE_PATH = "nap.db"
-db = SqliteDatabase(DATABASE_PATH)
+db = SqliteDatabase(DATABASE_PATH, threadlocals=True) # threadlocals allow multiple threads to simultaneously access (write) the db
 
 class NapModel(Model):
-    class Meta:
-        database = db
+	class Meta:
+		database = db
 
 
 class Partition(NapModel):

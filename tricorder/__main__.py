@@ -6,7 +6,7 @@ from models import DATABASE_PATH, create_tables, clear_tables
 import calculator
 
 
-OPERATIONS = ("syncdb", "cleardb", "calculate")
+OPERATIONS = ("syncdb", "cleardb", "calculate", "ccalculate")
 
 def main(*args):
 	if not args:
@@ -60,6 +60,10 @@ def calculate(*args):
 		else:
 			print ">>> Starting data analysis..."
 			calculator.calculate(path_data, path_artists, talky=True)
+
+def ccalculate(*args):
+	# TODO: check args (like above), maybe specify number of threads via parameter
+	calculator.calculate_concurrent(args[0], args[1], talky=True)
 
 if __name__ == '__main__':
 	main(*sys.argv[1:])
