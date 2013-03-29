@@ -24,16 +24,15 @@ Code Overview
 
 ### Package: `tricorder`
 
-Like the well know [Tricorder](http://readwrite.com/files/styles/800_450sc/public/fields/Mister_Tricorder.jpg),
-this package is for analysing the musicbrainz graph.
-
+Like the well known [Tricorder](http://readwrite.com/files/styles/800_450sc/public/fields/Mister_Tricorder.jpg),
+this package is for analysing data. In this case for the musicbrainz graph.
 To analyse a dataset, you need to convert the data to a proper
 format via the `processing` package.
-
 The results from the data analysis is written to a sqlite database
 named `nap.db`.
 
 The following measures are calculate:
+
 	- size (number of nodes)
 	- diameter
 	- density
@@ -57,14 +56,14 @@ python tricorder cleardb
 ```
 
 With this setup, you can start your data analysis with
-```console
+```sh
 python tricorder calculate path/to/precessed_data.csv path/to/top_10000_artists.csv
 ```
 
 This command will take a while and it will consume a lot of memory (over 16GB).
 But if you even have spare memory, you may want to speed up the computation
 with multithreading. To do so, use the following command
-```console
+```bin
 python tricorder ccalculate path/to/precessed_data.csv path/to/top_10000_artists.csv [number_of_threads]
 ```
 
