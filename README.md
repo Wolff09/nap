@@ -33,13 +33,13 @@ named `nap.db`.
 
 The following measures are calculate:
 
-	- size (number of nodes)
-	- diameter
-	- density
-	- degree
-	- closeness_centrality
-	- betweenness_centrality
-	- eccentricity
+- size (number of nodes)
+- diameter
+- density
+- degree
+- closeness_centrality
+- betweenness_centrality
+- eccentricity
 
 #### Usage
 
