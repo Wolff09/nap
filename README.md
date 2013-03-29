@@ -45,13 +45,13 @@ The following measures are calculate:
 
 First of all, you need to create a database to store the results of
 the data analysis. Therefore, type
-```console
+```sh
 python tricorder syncdb
 ```
 
 If your database already exists, your may want to clear it
 (remove all entries). You can do this with
-```console
+```sh
 python tricorder cleardb
 ```
 
@@ -63,7 +63,7 @@ python tricorder calculate path/to/precessed_data.csv path/to/top_10000_artists.
 This command will take a while and it will consume a lot of memory (over 16GB).
 But if you even have spare memory, you may want to speed up the computation
 with multithreading. To do so, use the following command
-```bin
+```sh
 python tricorder ccalculate path/to/precessed_data.csv path/to/top_10000_artists.csv [number_of_threads]
 ```
 
@@ -107,7 +107,7 @@ of artist names (as strings) and pass them to the method call. The processing re
 matches one of the given names (exact case insensitive match) and all adjacent edges.
 
 Alternatively, you can use this package from the command line by invoking
-```console
+```sh
 python path/to/nodes.csv path/to/edges.csv path/to/output.csv ["Various Artists"...]
 ```
 Again, you can specify an arbitrary number artist names which shall be deleted.
