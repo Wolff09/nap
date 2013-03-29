@@ -69,6 +69,25 @@ python tricorder ccalculate path/to/precessed_data.csv path/to/top_10000_artists
 
 The `number_of_threads` parameter is optional and defaults to `4`.
 
+You can use the tricorder from within your own python script, too.
+This is straight forward and thus only depicted in the following.
+
+```python
+from tricorder import *
+create_tables() # like python tricorder syncdb
+clear_tables() # like python tricorder cleardb
+print DATABASE_PATH # path to the databased used by this package
+calculate("path/to/precessed_data.csv", "path/to/top_10000_artists.csv")
+calculate_concurrent("path/to/precessed_data.csv", "path/to/top_10000_artists.csv")
+```
+
+Both, `calculate` and `calculate_concurrent`, take an optional parameter `talky`.
+This flag defaults to `false`. If `true` status information will be outputted.
+Furthermore, `calculate_concurrent` takes the optional parameter `num_threads`
+which defines the number of thread to be used for the computation of the metrics
+mentioned above. The number of threads defaults to `4` and at least one thread is
+used.
+
 #### Dependencies
 You need the [PeeWee ORM](https://github.com/coleifer/peewee) and SQLite.
 
