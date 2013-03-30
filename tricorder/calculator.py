@@ -63,7 +63,6 @@ def calculate_concurrent(path_data, path_artists, num_threads=4, talky=False):
 
 	# load data
 	for tupel in enumerate(iterator.components(path_data)):
-		if tupel[0] > 500: break
 		queue.put(tupel)
 
 	# wait until all threads are finished
