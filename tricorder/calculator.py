@@ -46,7 +46,7 @@ def calculate_concurrent(path_data, path_artists, num_threads=4, talky=False):
 			stdout.write('\n')
 
 	num_threads = max(num_threads, 1) # stupid user might be stupid
-	queue = Queue(maxsize=num_threads*2)
+	queue = Queue(maxsize=num_threads*4)
 	top_artists = get_top_artists(path_artists)
 	status = [0 for i in range(num_threads)]
 	do_the_print = True
@@ -59,6 +59,7 @@ def calculate_concurrent(path_data, path_artists, num_threads=4, talky=False):
 
 	# for status information
 	status_thread = Thread(target=print_stati)
+	status_thread.daemon = True
 	status_thread.start()
 
 	# load data
@@ -68,6 +69,7 @@ def calculate_concurrent(path_data, path_artists, num_threads=4, talky=False):
 	# wait until all threads are finished
 	queue.join()
 	do_the_print = False
+	status_thread.join() # let it write a newline
 
 def calculate(path_data, path_artists, talky=False):
 	"""
