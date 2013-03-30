@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from models import Partition, Node
 import component_iterator as iterator
 import shortcuts as sc
