@@ -90,7 +90,7 @@ def calculate_connected_component(index, graph, top_artists, talky=False):
 		- density
 		- degree
 		- closeness_centrality
-		- betweenness_centrality
+		[- betweenness_centrality]
 		- eccentricity
 
 	The first three measures are computed for each connected component.
@@ -107,7 +107,7 @@ def calculate_connected_component(index, graph, top_artists, talky=False):
 	diameter = nx.diameter(graph) if is_real_graph else 0
 	degree = sc.degree_centrality(graph) if is_real_graph else {}
 	closeness = sc.closeness_centrality(graph) if is_real_graph else {}
-	betweenness = sc.betweenness_centrality(graph) if is_real_graph else {}
+	#betweenness = sc.betweenness_centrality(graph) if is_real_graph else {}
 	eccentricity = sc.eccentricity(graph) if is_real_graph else {}
 
 	# create Node DB entries
@@ -119,7 +119,7 @@ def calculate_connected_component(index, graph, top_artists, talky=False):
 		ecc = 1/eccentricity[id] if id in eccentricity else 0 # need an extra variable here since division by zero is evil
 		Node.create(nid=int(id), pid=graph.graph['pid'], node_type=attrs["type"],
 			name=attrs["name"], degree=degree.get(id, 0), closeness=closeness.get(id, 0),
-			eccentricity=ecc, betweenness=betweenness.get(id, 0))
+			eccentricity=ecc)#, betweenness=betweenness.get(id, 0))
 
 	# create Partition DB entry
 	Partition.create(pid=graph.graph['pid'], diameter=diameter,

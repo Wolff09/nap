@@ -30,7 +30,7 @@ class Node(NapModel):
 	degree = IntegerField()
 	closeness = FloatField()
 	eccentricity = FloatField()
-	betweenness = FloatField()
+	#betweenness = FloatField()
 
 
 def connect():
