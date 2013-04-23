@@ -112,8 +112,8 @@ def calculate_connected_component(index, graph, top_artists, talky=False):
 	print "closeness..."
 	closeness = sc.closeness_centrality(graph) if is_real_graph else {}
 	#betweenness = sc.betweenness_centrality(graph) if is_real_graph else {}
-	print "eccentricity..."
-	eccentricity = sc.eccentricity(graph) if is_real_graph else {}
+	#print "eccentricity..."
+	#eccentricity = sc.eccentricity(graph) if is_real_graph else {}
 
 	# create Node DB entries
 	for id, attrs in graph.node.items():
@@ -123,8 +123,8 @@ def calculate_connected_component(index, graph, top_artists, talky=False):
 				num_top_artists += 1
 		ecc = 1/eccentricity[id] if id in eccentricity else 0 # need an extra variable here since division by zero is evil
 		Node.create(nid=int(id), pid=graph.graph['pid'], node_type=attrs["type"],
-			name=attrs["name"], degree=degree.get(id, 0), closeness=closeness.get(id, 0),
-			eccentricity=ecc)#, betweenness=betweenness.get(id, 0))
+			name=attrs["name"], degree=degree.get(id, 0), closeness=closeness.get(id, 0))
+			#eccentricity=ecc)#, betweenness=betweenness.get(id, 0))
 
 	# create Partition DB entry
 	Partition.create(pid=graph.graph['pid'], diameter=diameter,

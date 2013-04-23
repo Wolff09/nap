@@ -29,7 +29,7 @@ class Node(NapModel):
 	node_type = CharField()
 	degree = IntegerField()
 	closeness = FloatField()
-	eccentricity = FloatField()
+	#eccentricity = FloatField()
 	#betweenness = FloatField()
 
 
