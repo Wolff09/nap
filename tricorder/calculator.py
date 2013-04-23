@@ -121,7 +121,7 @@ def calculate_connected_component(index, graph, top_artists, talky=False):
 			num_artists += 1
 			if attrs['name'] in top_artists:
 				num_top_artists += 1
-		ecc = 1/eccentricity[id] if id in eccentricity else 0 # need an extra variable here since division by zero is evil
+		#ecc = 1/eccentricity[id] if id in eccentricity else 0 # need an extra variable here since division by zero is evil
 		Node.create(nid=int(id), pid=graph.graph['pid'], node_type=attrs["type"],
 			name=attrs["name"], degree=degree.get(id, 0), closeness=closeness.get(id, 0))
 			#eccentricity=ecc)#, betweenness=betweenness.get(id, 0))
