@@ -14,7 +14,7 @@ class NapModel(Model):
 
 class Partition(NapModel):
 	pid = PrimaryKeyField()
-	diameter = IntegerField()
+	#diameter = IntegerField()
 	num_nodes = IntegerField()
 	num_edges = IntegerField()
 	num_artists = IntegerField()
