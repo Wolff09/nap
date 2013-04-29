@@ -103,13 +103,10 @@ def calculate_connected_component(index, graph, top_artists, talky=False):
 	num_top_artists = 0
 
 	# calculate measures (only if we have edges!)
-	print "density..."
 	density = nx.density(graph) if is_real_graph else 0
 	#print "diameter..."
 	#diameter = nx.diameter(graph) if is_real_graph else 0
-	print "degree..."
 	degree = sc.degree_centrality(graph) if is_real_graph else {}
-	print "closeness..."
 	closeness = sc.closeness_centrality(graph) if is_real_graph else {}
 	#betweenness = sc.betweenness_centrality(graph) if is_real_graph else {}
 	#print "eccentricity..."
